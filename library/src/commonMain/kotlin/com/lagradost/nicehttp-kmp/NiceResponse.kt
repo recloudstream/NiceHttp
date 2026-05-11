@@ -44,6 +44,12 @@ class NiceResponse(
     /** Reads the body as a string. Cached after first call. */
     val text: String by lazy {
         runBlockingCompat {
+            val len = size
+            if (len != null && len > MAX_TEXT_BYTES) {
+                throw IllegalStateException(
+                    "Called .text on a response with Content-Length $len > $MAX_TEXT_BYTES bytes. Use .textLarge instead."
+                )
+            }
             val raw = response.bodyAsText()
             if (raw.length.toLong() > MAX_TEXT_BYTES) {
                 throw IllegalStateException(
