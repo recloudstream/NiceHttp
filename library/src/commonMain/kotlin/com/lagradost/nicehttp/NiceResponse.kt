@@ -66,9 +66,6 @@ class NiceResponse(
     val document: NiceDocument by lazy { parseDocument(text) }
     val documentLarge: NiceDocument by lazy { parseDocument(textLarge) }
 
-    val ksoupDocument: Document by lazy { Ksoup.parse(text) }
-    val ksoupDocumentLarge: Document by lazy { Ksoup.parse(textLarge) }
-
     /** Response body. Call .bytes() or .string() to read. Call .close() when done (no-op here). */
     val body: ResponseBody by lazy {
         ResponseBody(runBlockingCompat { response.readRawBytes() })
