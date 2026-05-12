@@ -189,11 +189,16 @@ app.post("https://httpbin.org/post") {
 val response = app.get(url)
 
 response.code           // Int - HTTP status code
-response.text           // String - body (cached, guarded at 5MB)
-response.textLarge      // String - body without size guard
-response.body.bytes()   // ByteArray
-response.body.string()  // String
-response.body.source()  // okio.BufferedSource on JVM, PlatformSource on others
+response.text           // Deprecated; use text()
+response.textLarge      // Deprecated; use textLarge()
+response.text()         // String - body (cached, guarded at 5MB)
+response.textLarge()    // String - body without size guard
+response.body           // Deprecated; use body()
+response.body().bytes()  // ByteArray
+response.body().string() // String
+response.body().contentLength() // Long - content length in bytes
+response.body().byteStream() // InputStream on JVM/Android, custom compatible implementation on other platforms
+response.body().source() // okio.BufferedSource
 response.cookies        // Map<String, String>
 response.headers        // NiceHeaders - ktor Headers but also includes .toMap(), .toMultiMap() for back-compat
 response.header("Content-Type") // String? - convenience header access for back-compat
@@ -201,12 +206,12 @@ response.isSuccessful   // Boolean - true if 2xx
 response.url            // String - final URL after redirects
 
 // HTML parsing
-response.document           // org.jsoup.Document on JVM/Android, ksoup on others
-response.documentLarge      // same but without size guard
-response.ksoupDocument      // always com.fleeksoft.ksoup.nodes.Document
-response.ksoupDocumentLarge // same but without size guard
+response.document           // org.jsoup.Document on JVM/Android, ksoup on others; deprecated, use document() for ksoup
+response.documentLarge      // same but without size guard; deprecated, use documentLarge() for ksoup
+response.document()      // always com.fleeksoft.ksoup.nodes.Document
+response.documentLarge() // same but without size guard
 
-// JSON parsing (requires SerializationResponseParser)
+// JSON parsing (requires SerializationResponseParser or a custom parser)
 response.parsed<MyClass>()
 response.parsedSafe<MyClass>()
 response.parsedLarge<MyClass>()
