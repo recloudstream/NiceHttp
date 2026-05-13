@@ -23,7 +23,10 @@ interface ResponseParser {
  */
 data class JsonAsString(val string: String)
 
-/** Common content-type constants used when building request bodies. */
+/**
+ * Common content-type constants used when building request bodies.
+ * TODO: Deprecate in favor of ktor's built-in ContentType
+ */
 object RequestBodyTypes {
     const val JSON = "application/json;charset=utf-8"
     const val TEXT = "text/plain;charset=utf-8"
