@@ -146,7 +146,7 @@ open class Requests(
                 mapOf("Cache-Control" to "max-age=${cacheTime.inWholeSeconds}")
             ))
         }
-        // allInterceptors.add(0, CacheInterceptor)
+
         if (interceptor != null) allInterceptors.add(interceptor)
 
         // Pick base client
