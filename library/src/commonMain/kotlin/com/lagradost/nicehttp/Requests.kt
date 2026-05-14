@@ -195,7 +195,7 @@ open class Requests(
         level = DeprecationLevel.WARNING,
     )
     open suspend fun custom(
-        method: HttpMethod,
+        method: String,
         url: String,
         headers: Map<String, String> = emptyMap(),
         referer: String? = null,
@@ -204,16 +204,20 @@ open class Requests(
         data: Map<String, String>? = defaultData,
         files: List<NiceFile>? = null,
         json: Any? = null,
-        requestBody: RequestBody? = null,
+        requestBody: NiceRequestBodyCompat? = null,
         allowRedirects: Boolean = true,
-        cacheTime: Duration = defaultCacheTime,
-        timeout: Duration = defaultTimeout,
-        interceptor: Interceptor? = null,
+        cacheTime: Int = 0,
+        cacheUnit: NiceTimeUnit = NiceTimeUnit.MINUTES,
+        timeout: Long = 0L,
+        interceptor: NiceInterceptorCompat? = null,
         verify: Boolean = true,
         responseParser: ResponseParser? = this.responseParser,
     ): NiceResponse = request(
-        method, url, headers, referer, params, cookies, data, files, json, requestBody,
-        allowRedirects, cacheTime, timeout, interceptor, verify, responseParser,
+        HttpMethod(method.uppercase()), url, headers, referer, params, cookies,
+        data, files, json, requestBody?.toRequestBody(), allowRedirects,
+        cacheTime.toLong().toDuration(cacheUnit.toDurationUnit()),
+        timeout.seconds,
+        interceptor?.toInterceptor(), verify, responseParser,
     )
 
     suspend fun get(
@@ -540,7 +544,7 @@ private val NO_BODY_METHODS = setOf(
  * 3. [json] (JSON body)
  * 4. [files] (multipart)
  * 5. Empty form body for methods in [MUST_HAVE_BODY] when nothing else is provided
- * 6. null for GET/HEAD/etc.
+ * 6. null for [NO_BODY_METHODS] or when none of the above criteria is met
  */
 internal fun buildBody(
     method: HttpMethod,
