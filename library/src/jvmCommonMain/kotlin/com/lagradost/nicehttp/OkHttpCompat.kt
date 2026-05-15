@@ -19,6 +19,10 @@ import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
+@Deprecated(
+    "OkHttp back-compat shim. Use the Ktor-based request builder instead.",
+    level = DeprecationLevel.WARNING,
+)
 fun requestCreator(
     method: String,
     url: String,
@@ -90,6 +94,10 @@ fun requestCreator(
 }
 
 // Provides async-able Calls
+@Deprecated(
+    "OkHttp back-compat shim. Use the Ktor-based request builder instead.",
+    level = DeprecationLevel.ERROR,
+)
 class ContinuationCallback(
     private val call: Call,
     private val continuation: CancellableContinuation<Response>,
@@ -124,8 +132,13 @@ class ContinuationCallback(
 }
 
 object RequestsCompat {
+    @Deprecated(
+        "OkHttp back-compat shim. Use the Ktor-based request builder instead.",
+        level = DeprecationLevel.ERROR,
+    )
     suspend inline fun Call.await(): Response {
         return suspendCancellableCoroutine { continuation ->
+            @Suppress("DEPRECATION_ERROR")
             val callback = ContinuationCallback(this, continuation)
             enqueue(callback)
             continuation.invokeOnCancellation(callback)
